@@ -134,3 +134,5 @@ _NCrunch*
 
 devops/c[0-9]*_cfg
 devops/c[0-9]*_data
+**/.vs
+**/.idea
