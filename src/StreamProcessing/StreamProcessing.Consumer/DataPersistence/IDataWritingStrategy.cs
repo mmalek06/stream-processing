@@ -1,6 +1,6 @@
 ﻿using StreamProcessing.Contracts;
 
-namespace StreamProcessing.Consumer;
+namespace StreamProcessing.Consumer.DataPersistence;
 
 public interface IDataWritingStrategy
 {

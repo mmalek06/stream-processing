@@ -3,7 +3,7 @@ using System.Text.Json;
 using Confluent.Kafka;
 using StreamProcessing.Contracts;
 
-namespace StreamProcessing.Consumer;
+namespace StreamProcessing.Consumer.EventReading;
 
 public class ScadaDataPointDeserializer : IDeserializer<ScadaDataPoint>
 {

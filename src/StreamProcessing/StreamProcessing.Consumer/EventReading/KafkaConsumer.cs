@@ -2,7 +2,7 @@
 using Confluent.Kafka.Admin;
 using StreamProcessing.Contracts;
 
-namespace StreamProcessing.Consumer;
+namespace StreamProcessing.Consumer.EventReading;
 
 public class KafkaConsumer : IDisposable
 {

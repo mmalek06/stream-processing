@@ -1,16 +1,17 @@
 ﻿using Confluent.Kafka;
-using StreamProcessing.Consumer;
+using StreamProcessing.Consumer.DataPersistence;
+using StreamProcessing.Consumer.DataPersistence.Cassandra;
+using StreamProcessing.Consumer.DataPersistence.ElasticSearch;
+using StreamProcessing.Consumer.EventReading;
 using StreamProcessing.Contracts;
 
-const string BootstrapServers = "localhost:29092";
-const string Topic = "scada-stream";
 var cts = new CancellationTokenSource();
 var dataWriters = new IDataWritingStrategy[]
 {
-    new CassandraRawDataWritingStrategy(),
+    new CassandraRawDataWritingStrategy("streamprocessing", "localhost"),
     new ElasticSearchAggregatedDataWritingStrategy()
 };
-using var consumer = new KafkaConsumer(new[] { BootstrapServers }, Topic);
+using var consumer = new KafkaConsumer(new[] { "localhost:29092" }, "scada-stream");
 
 Console.WriteLine(@"Running consumer - this will simulate the process of receiving data belonging to one wind turbine.");
 
