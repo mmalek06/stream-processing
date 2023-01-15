@@ -1,0 +1,23 @@
+version: '3.8'
+
+networks:
+  cassandra:
+
+services:
+  cass1:
+    image: cassandra:4.1.0
+    container_name: cass1
+    hostname: cass1
+    mem_limit: ${CASSANDRA_MEM_LIMIT}
+    healthcheck:
+        test: ["CMD", "cqlsh", "-e", "describe keyspaces" ]
+        interval: 5s
+        timeout: 5s
+        retries: 60
+    networks:
+      - cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./c1_data:/var/lib/cassandra
+      - ./c1_cfg:/etc/cassandra

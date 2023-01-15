@@ -28,8 +28,9 @@ for ($i = 1; $i -lt 4; $i++) {
     }
 }
 
-Write-Output "Starting Cassandra cluster..." | Starting
-docker-compose -f docker-compose.cassandra.yml up -d
+Write-Output "Starting Cassandra - nonclustered..." | Starting
+Write-Output "If you wish to run a clustered version of Cassandra, you will need some serious amount of RAM!" | Starting
+docker-compose -f docker-compose.cassandra-nonclustered.yml up -d
 docker ps
 docker exec cass1 nodetool status
 docker exec -it cass1   cqlsh  -e "describe keyspaces"
@@ -40,3 +41,9 @@ Write-Output "If you wish to run a clustered version of ElasticSearch, you will 
 docker-compose -f docker-compose.elasticsearch-nonclustered.yml up -d
 docker ps
 Write-Output "ElasticSearch node started" | Finished
+
+Write-Output "Starting Kafka - nonclustered..." | Starting
+Write-Output "If you wish to run a clustered version of Kafka, you will need some serious amount of RAM!" | Starting
+docker-compose -f docker-compose.kafka.yml up -d
+docker ps
+Write-Output "Kafka node started" | Finished
