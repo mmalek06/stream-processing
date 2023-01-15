@@ -1,6 +1,5 @@
 ﻿using Cassandra;
 using Cassandra.Data.Linq;
-using Cassandra.Mapping;
 using StreamProcessing.Contracts;
 
 namespace StreamProcessing.Consumer.DataPersistence.Cassandra;
@@ -29,7 +28,7 @@ public class CassandraRawDataWritingStrategy : IDataWritingStrategy, IDisposable
 
         var table = _session.GetTable<ScadaDataPointEntity>();
 
-        var result = await table.Insert(dataPoint.ToEntity()).ExecuteAsync();
+        await table.Insert(dataPoint.ToEntity()).ExecuteAsync();
     }
 
     public void Dispose()
