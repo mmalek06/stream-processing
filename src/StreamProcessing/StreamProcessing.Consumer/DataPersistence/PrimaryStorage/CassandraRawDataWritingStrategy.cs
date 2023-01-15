@@ -2,9 +2,9 @@
 using Cassandra.Data.Linq;
 using StreamProcessing.Contracts;
 
-namespace StreamProcessing.Consumer.DataPersistence.Cassandra;
+namespace StreamProcessing.Consumer.DataPersistence.PrimaryStorage;
 
-public class CassandraRawDataWritingStrategy : IDataWritingStrategy, IDisposable
+public class CassandraRawDataWritingStrategy : IDataWritingStrategy
 {
     private readonly string _keyspace;
     private readonly Cluster _cluster;
@@ -30,6 +30,9 @@ public class CassandraRawDataWritingStrategy : IDataWritingStrategy, IDisposable
 
         await table.Insert(dataPoint.ToEntity()).ExecuteAsync();
     }
+
+    public Task Flush() =>
+        Task.CompletedTask;
 
     public void Dispose()
     {

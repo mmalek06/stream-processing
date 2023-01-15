@@ -1,6 +1,6 @@
 ﻿using Cassandra;
 
-namespace StreamProcessing.Consumer.DataPersistence.Cassandra;
+namespace StreamProcessing.Consumer.DataPersistence.PrimaryStorage;
 
 public record ScadaDataPointEntity(
     LocalDate Date,

@@ -1,6 +1,6 @@
 ﻿using Cassandra.Mapping;
 
-namespace StreamProcessing.Consumer.DataPersistence.Cassandra;
+namespace StreamProcessing.Consumer.DataPersistence.PrimaryStorage;
 
 public static class EntitiesMapping
 {

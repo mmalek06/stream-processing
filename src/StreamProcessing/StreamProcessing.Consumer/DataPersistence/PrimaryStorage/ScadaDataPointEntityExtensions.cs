@@ -1,7 +1,7 @@
 ﻿using Cassandra;
 using StreamProcessing.Contracts;
 
-namespace StreamProcessing.Consumer.DataPersistence.Cassandra;
+namespace StreamProcessing.Consumer.DataPersistence.PrimaryStorage;
 
 public static class ScadaDataPointEntityExtensions
 {
