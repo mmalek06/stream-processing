@@ -29,14 +29,7 @@ public class CassandraRawDataWritingStrategy : IDataWritingStrategy, IDisposable
 
         var table = _session.GetTable<ScadaDataPointEntity>();
 
-        try
-        {
-            var result = await table.Insert(dataPoint.ToEntity()).ExecuteAsync();
-        }
-        catch (Exception exc)
-        {
-            throw;
-        }
+        var result = await table.Insert(dataPoint.ToEntity()).ExecuteAsync();
     }
 
     public void Dispose()

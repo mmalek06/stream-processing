@@ -14,6 +14,7 @@ public class KafkaConsumer : IDisposable
     private readonly ConsumerConfig _consumerConfig;
     
     private IConsumer<string, ScadaDataPoint>? _consumer;
+    private DateTime? _lastMessageReceivedAt;
 
     public KafkaConsumer(IEnumerable<string> bootstrapServers, string topic)
     {
@@ -28,6 +29,7 @@ public class KafkaConsumer : IDisposable
 
     public async Task Consume(Func<IConsumer<string, ScadaDataPoint>, CancellationTokenSource, Task> receiveMessage, CancellationTokenSource cts)
     {
+        _lastMessageReceivedAt = DateTime.UtcNow;
         _consumer = new ConsumerBuilder<string, ScadaDataPoint>(_consumerConfig)
             .SetKeyDeserializer(Deserializers.Utf8)
             .SetValueDeserializer(new ScadaDataPointDeserializer())
@@ -39,9 +41,8 @@ public class KafkaConsumer : IDisposable
         _consumer.Subscribe(_topic);
 
         var counter = 0;
-        var lastMessageReceivedAt = DateTime.UtcNow;
 
-        SetupConsumptionInterrupt(cts, lastMessageReceivedAt);
+        SetupConsumptionInterrupt(cts);
         
         try
         {
@@ -51,7 +52,7 @@ public class KafkaConsumer : IDisposable
                 {
                     await receiveMessage(_consumer, cts);
                     
-                    lastMessageReceivedAt = DateTime.UtcNow;
+                    _lastMessageReceivedAt = DateTime.UtcNow;
                     counter++;
 
                     if (counter % InformEveryNLines == 0)
@@ -88,13 +89,13 @@ public class KafkaConsumer : IDisposable
         }
     }
     
-    private static void SetupConsumptionInterrupt(CancellationTokenSource cts, DateTime lastMessageReceivedAt)
+    private void SetupConsumptionInterrupt(CancellationTokenSource cts)
     {
         Task.Run(async () =>
         {
             while (true)
             {
-                if ((DateTime.UtcNow - lastMessageReceivedAt).Seconds >= KillConsumerDelaySeconds)
+                if ((DateTime.UtcNow - _lastMessageReceivedAt!.Value).Seconds >= KillConsumerDelaySeconds)
                 {
                     cts.Cancel();
 
