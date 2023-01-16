@@ -7,16 +7,14 @@ namespace StreamProcessing.Consumer.DataPersistence.PrimaryStorage;
 public class CassandraRawDataWritingStrategy : IDataWritingStrategy
 {
     private readonly string _keyspace;
-    private readonly Cluster _cluster;
+    private readonly ICluster _cluster;
 
     private ISession? _session; 
 
-    public CassandraRawDataWritingStrategy(string keyspace, params string[] hosts)
+    public CassandraRawDataWritingStrategy(string keyspace, ICluster cluster)
     {
         _keyspace = keyspace;
-        _cluster = Cluster.Builder()
-            .AddContactPoints(hosts)
-            .Build();
+        _cluster = cluster;
     }
     
     public async Task Write(ScadaDataPoint dataPoint)

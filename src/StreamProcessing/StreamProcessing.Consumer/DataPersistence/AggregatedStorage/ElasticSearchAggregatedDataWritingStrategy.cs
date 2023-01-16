@@ -1,16 +1,23 @@
-﻿using StreamProcessing.Contracts;
+﻿using Nest;
+using StreamProcessing.Contracts;
 
 namespace StreamProcessing.Consumer.DataPersistence.AggregatedStorage;
 
 public class ElasticSearchAggregatedDataWritingStrategy : IDataWritingStrategy
 {
+    public const string Index = "daily-turbine-data";
+    
     private readonly TurbineDailyDataPoints _aggregate;
+    private readonly IElasticClient _client;
     
     private DateOnly? _lastDate;
-
-    public ElasticSearchAggregatedDataWritingStrategy() =>
-        _aggregate = new TurbineDailyDataPoints(new List<double>(), new List<double>());
     
+    public ElasticSearchAggregatedDataWritingStrategy(IElasticClient elasticClient)
+    {
+        _aggregate = new TurbineDailyDataPoints(new List<double>(), new List<double>());
+        _client = elasticClient;
+    }
+
     public async Task Write(ScadaDataPoint dataPoint)
     {
         if (!_aggregate.PowerLevels.Any())
@@ -49,8 +56,10 @@ public class ElasticSearchAggregatedDataWritingStrategy : IDataWritingStrategy
     
     private async Task PersistAggregate()
     {
+        await _client.ConfigureIfRequired(Index);
+        
         var dailyDataEntity = new TurbineDailyData(
-            _lastDate!.Value,
+            _lastDate!.Value.ToDateTime(TimeOnly.MinValue),
             _aggregate.PowerLevels.Average(),
             _aggregate.PowerLevels.Min(),
             _aggregate.PowerLevels.Max(),
@@ -58,6 +67,7 @@ public class ElasticSearchAggregatedDataWritingStrategy : IDataWritingStrategy
             _aggregate.WindSpeeds.Min(),
             _aggregate.WindSpeeds.Max());
 
+        await _client.IndexDocumentAsync(dailyDataEntity);
     }
     
     private void Update(ScadaDataPoint dataPoint)
